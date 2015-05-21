@@ -84,6 +84,7 @@ create_Workspace () {
 update_OS () {
   info "Updating Ubuntu"
   sudo apt-get -y update
+  sudo apt-get -y upgrade
   ok "Ubuntu is updated"
 }
 
@@ -130,11 +131,11 @@ install_Cisco_AnyConnect_VPN_Client () {
 install_VMWare_Horizon_Client () {
   # Install dependencies. These packages are 32-bit version
   sudo dpkg --add-architecture i386
-  sudo apt-get update
-  sudo apt-get install libxml2:i386 libssl1.0.0:i386 libXtst6:i386 libudev1:i386 libpcsclite1:i386 libtheora0:i386 libv4l-0:i386 libpulse0:i386 freerdp-x11 libatk1.0-0:i386 libgdk-pixbuf2.0-0:i386 libgtk2.0-0:i386 libxss1:i386
+  sudo apt-get -y update
+  sudo apt-get -y install libxml2:i386 libssl1.0.0:i386 libXtst6:i386 libudev1:i386 libpcsclite1:i386 libtheora0:i386 libv4l-0:i386 libpulse0:i386 freerdp-x11 libatk1.0-0:i386 libgdk-pixbuf2.0-0:i386 libgtk2.0-0:i386 libxss1:i386
   sudo ln -sf /lib/i386-linux-gnu/libudev.so.1 /lib/i386-linux-gnu/libudev.so.0
   sudo ln -sf /lib/i386-linux-gnu/libssl.so.1.0.0 /lib/i386-linux-gnu/libssl.so.1.0.1
-  # sudo ln -sf /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.1
+  sudo ln -sf /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.1
   sudo ln -sf /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.1.0.1
 
   # Downloading VMWare Horizon Client
@@ -145,11 +146,14 @@ install_VMWare_Horizon_Client () {
   sudo /tmp/VMware-Horizon-Client.bundle
 
   # Source: https://communities.vmware.com/thread/499473
+
+  # TODO: Add it to the menu
 }
 
 install_Chrome () {
-  sudo cp "${SCRIPT_DIR}/files/google-chrome.repo" /etc/yum.repos.d/
-  sudo yum install -y google-chrome-stable
+  wget -O /tmp/google-chrome-stable_current_amd64.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  sudo dpkg --install /tmp/google-chrome-stable_current_amd64.deb
+  # If this does not work, try open http://www.google.com/intl/us_US/chrome/browser/ and download manually.
 }
 
 cleanup () {
