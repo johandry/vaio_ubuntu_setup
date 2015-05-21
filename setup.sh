@@ -97,20 +97,20 @@ install_Cisco_AnyConnect_VPN_Client () {
     # Source: https://www.auckland.ac.nz/en/for/current-students/cs-current-pg/cs-current-pg-support/vpn/cs-cisco-vpn-client-for-linux.html
     wget "${ANYCONNECT_URL}" -O /tmp/anyconnect.tar
 
-    # Install Pangox libraries
-    # Source: http://oit.ua.edu/wp-content/uploads/2014/08/Linux.pdf
-    # Source: https://pario.no/2014/09/30/fix-cisco-anyconnect-on-ubuntu-7/
-    sudo apt-get install -y pangox‐compat 
+    # Is it Required???
+    # Install Network Manager OpenConnect
+    # Source: http://askubuntu.com/questions/154699/how-do-i-install-the-cisco-anyconnect-vpn-client
+    sudo apt-get install -y network-manager-openconnect-gnome
 
     # Untar and install
     # Source: http://oit.ua.edu/wp-content/uploads/2014/08/Linux.pdf
     # Source: https://www.auckland.ac.nz/en/for/current-students/cs-current-pg/cs-current-pg-support/vpn/cs-cisco-vpn-client-for-linux.html
+    # Dependency: update_OS
     mkdir -p /tmp/anyconnect
-    sudo tar xf /tmp/anyconnect.tar -C /tmp/anyconnect
+    tar xf /tmp/anyconnect.tar -C /tmp/anyconnect
     cd /tmp/anyconnect/*/vpn/
     sudo ./vpn_install.sh
-    cd
-    sudo rm -rf /tmp/anyconnect 
+
     ok "Cisco AnyConnect VPN Client installed"
   fi
 
@@ -119,23 +119,23 @@ install_Cisco_AnyConnect_VPN_Client () {
   sudo systemctl start vpnagentd.service
   sudo systemctl status vpnagentd.service
 
-  info "Open a browser to the VPN page"
+  info "If Service is not working, try restart Ubuntu"
+
+  info "Connect to the VPN to get the profile"
   /opt/cisco/anyconnect/bin/vpnui
 
-  # Comments:
-  #   Useful commands:
-  #   * yum provides <program>: List packages that provides a program or library
-  #   * yum list | grep xml: List installed programs
-  #   * ldconfig -p | grep xml: List installed libraries and where they are located.
-  #   * ldd vpnagentd | grep xml: Show libraries of the program and where they are linked to
+  ok "Cisco AnyConnect VPN Client installed"
 }
 
 install_VMWare_Horizon_Client () {
   # Install dependencies. These packages are 32-bit version
-  sudo yum install -y glibc.i686 libgcc.i686 gtk2-engines.i686 PackageKit-gtk-module.i686 libpng12.i686 libXScrnSaver.i686 openssl-libs.i686 openssl-devel.i686 libxml2.i686 atk-devel.i686 gtk2-devel.i686 libxml2-devel.i686 libcanberra-gtk2.i686
-  cd /usr/lib
-  sudo ln -s /usr/lib/libcrypto.so.1.0.1e libssl.so.1.0.1
-  sudo ln -s /usr/lib/libcrypto.so.1.0.1e libcrypto.so.1.0.1
+  sudo dpkg --add-architecture i386
+  sudo apt-get update
+  sudo apt-get install libxml2:i386 libssl1.0.0:i386 libXtst6:i386 libudev1:i386 libpcsclite1:i386 libtheora0:i386 libv4l-0:i386 libpulse0:i386 freerdp-x11 libatk1.0-0:i386 libgdk-pixbuf2.0-0:i386 libgtk2.0-0:i386 libxss1:i386
+  sudo ln -sf /lib/i386-linux-gnu/libudev.so.1 /lib/i386-linux-gnu/libudev.so.0
+  sudo ln -sf /lib/i386-linux-gnu/libssl.so.1.0.0 /lib/i386-linux-gnu/libssl.so.1.0.1
+  # sudo ln -sf /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.1
+  sudo ln -sf /lib/i386-linux-gnu/libcrypto.so.1.0.0 /lib/i386-linux-gnu/libcrypto.so.1.0.1
 
   # Downloading VMWare Horizon Client
   wget ${VMWARE_HORIZON_CLIENT_URL} -O /tmp/VMware-Horizon-Client.bundle
@@ -144,7 +144,7 @@ install_VMWare_Horizon_Client () {
   chmod +x /tmp/VMware-Horizon-Client.bundle
   sudo /tmp/VMware-Horizon-Client.bundle
 
-  # Source: http://www.davemalpass.com/install-vmware-horizon-view-client-on-fedora-21-64bit/
+  # Source: https://communities.vmware.com/thread/499473
 }
 
 install_Chrome () {
