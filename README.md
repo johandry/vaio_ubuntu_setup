@@ -35,9 +35,10 @@ A few notes about the install:
 
 ## Setup
 
-Git is installed by default so just clone this repository and execute the setup.sh script:
+Git is not installed by default so install it, clone this repository and execute the setup.sh script:
 
 ```
+sudo apt-get install -y git
 git clone https://github.com/johandry/vaio_ubuntu_setup.git /home/$USER/Setup && cd !$
 ./setup.sh
 ```
