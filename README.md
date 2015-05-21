@@ -31,3 +31,29 @@ Once it is done you can unplug the USB Flash drive form the Mac and plug it in t
 A few notes about the install:
 
 * Press the F11 key when the computer is powered on, this is to boot from the USB.
+* If the installer don't show the option to install Ubuntu alongside Windows 8 then quit the installation to go to "Try Ubuntu" mode, open a terminal and with the command 'parted' delete the partitions that are not NFS (Windows partitions). Then restart the installation.
+
+## Setup
+
+Git is installed by default so just clone this repository and execute the setup.sh script:
+
+```
+git clone https://github.com/johandry/vaio_ubuntu_setup.git /home/$USER/Setup && cd !$
+./setup.sh
+```
+
+This script - check code [here](https://raw.githubusercontent.com/johandry/vaio_ubuntu_setup/master/setup.sh) - will do:
+
+1. Install Cisco AnyConnect VPN Client 
+1. Install VMWare Horizon Client
+1. Install MATE Desktop
+1. Install Cinnamon Desktop 
+1. Install Puppet to automate installs
+
+The Puppet Manifest will make sure:
+
+1. Install Docker
+1. Install Packer and Vagrant
+1. Sublime Text 3
+1. 
+
