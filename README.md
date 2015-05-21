@@ -15,7 +15,7 @@ I use a USB Flash drive to install Ubuntu MATE and I'm using a Mac OS X 10.10 to
 wget http://cdimage.ubuntu.com/ubuntu-mate/releases/15.04/release/ubuntu-mate-15.04-desktop-amd64.iso
 ```
 
-You may skip this step if you are in Linux. If you are in Mac OS X convert the ISO to DMG. The first command is to identify where the USB Flash drive is mounted, in this case it is /dev/disk2 and that's the value for USB\_DISK. So, replace MOUNT_ON value for the disk that is using the USB Flash in your Mac.
+In Mac OS X convert the ISO to DMG. The first command is to identify where the USB Flash drive is mounted, in this case it is /dev/disk2 and that's the value for USB\_DISK. So, replace MOUNT_ON value for the disk that is using the USB Flash in your Mac.
 
 ``` 
 hdiutil convert -format UDRW -o ubuntu-mate-15.04-desktop-amd64 ubuntu-mate-15.04-desktop-amd64.iso
@@ -25,9 +25,8 @@ diskutil umountDisk $USB_DISK
 sudo dd if=ubuntu-mate-15.04-desktop-amd64.dmg of=$USB_DISK
 
 ```
-If you are on Linux machine, just use the dd command with the ISO file instead of the DMG. 
 
-Once it is done you can unplug the USB Flash drive form the Mac or Linux machine and plug it in the VAIO to start the install of Ubuntu MATE.
+Once it is done you can unplug the USB Flash drive form the Mac and plug it in the VAIO to start the install of Ubuntu MATE.
 
 A few notes about the install:
 
