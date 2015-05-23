@@ -14,6 +14,7 @@ node "vaio.johandry.com" {
   $timestamp	= generate('/bin/date', '+%m%d%Y_%H:%M:%S')
 
   include base
-  include vpn
+  include utils
+  include docker
 
 }

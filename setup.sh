@@ -12,8 +12,8 @@ declare -r VMWARE_HORIZON_CLIENT_URL="https://download3.vmware.com/software/view
 
 declare -r username=johandry
 
-declare -r SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
-source "${SCRIPT_DIR}/common.sh"
+declare -r SETUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
+source "${SETUP_DIR}/puppet/modules/base/files/common.sh"
 
 
 init () {

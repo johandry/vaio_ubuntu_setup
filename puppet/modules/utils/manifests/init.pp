@@ -1,11 +1,18 @@
-class vpn {
+class utils {
 
   # VMWare Horizon Client URL
   $vmware_horizon_client_url	= "https://download3.vmware.com/software/view/viewclients/CART14Q4/VMware-Horizon-Client-3.2.0-2331566.x86.bundle"
 
   # Install Network Manager OpenConnect
-  package { "network-manager-openconnect-gnome":
+  package { [ "network-manager-openconnect-gnome", "network-manager-openconnect"]:
     ensure		=> "latest",
+  }
+
+  # Install Google Chorme
+  exec { "dpkg install google-chrome":
+    command		=> "wget -O /tmp/google-chrome-stable_current_amd64.deb $google_chrome_url && dpkg --install /tmp/google-chrome-stable_current_amd64.deb",
+    creates		=> "/opt/google/chrome/google-chrome",
+    logoutput	=> on_failure,
   }
 
   # Install VMWare Horizon Client Requirements
@@ -57,5 +64,7 @@ class vpn {
     creates		=> "/usr/bin/vmware-view",
     logoutput	=> on_failure,
   }
+
+  # The install will continue in the setup.sh script because it's done with a GUI
 
 }

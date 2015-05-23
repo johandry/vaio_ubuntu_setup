@@ -2,6 +2,53 @@ class base {
 
   # Google Chrome URL
   $google_chrome_url	= "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+  $puppet_url			= ""
+
+
+  # Make sure the user was created
+  user { "${username}":
+    ensure		=> "present",
+    managehome	=> true,
+    groups		=> ['docker'],
+  }
+
+  # Make sure the FQDN is set
+  host { "vaio.johandry.com":
+    ip			 => "127.0.1.1",
+    host_aliases => "vaio",
+  }
+
+  # Make sure puppet is installed
+  exec { "dpkg install puppetlabs repository":
+    command		=> "wget -O /tmp/puppetlabs-release.deb ${puppet_url} && dpkg -i /tmp/puppetlabs-release.deb && apt-get update",
+    creates		=> "/etc/apt/sources.list.d/puppetlabs.list",
+    logoutput	=> on_failure,
+  }
+  package { "puppet":
+    ensure		=> "latest",
+    require		=> Exec['dpkg install puppetlabs repository'],
+  }
+
+  file { "/home/${username}/bin":
+    ensure		=> "directory",
+    mode		=> 0750,
+    owner		=> "${username}",
+    group		=> "${username}",
+  }
+  file { "/home/${username}/bin/common.sh":
+    ensure 		=> "file",
+    mode		=> 0750,
+    owner		=> "${username}",
+    group		=> "${username}",
+    source		=> "puppet:///modules/base/common.sh",
+  }
+  file { "/home/${username}/bin/vpn.sh":
+    ensure 		=> "file",
+    mode		=> 0750,
+    owner		=> "${username}",
+    group		=> "${username}",
+    source		=> "puppet:///modules/base/vpn.sh",
+  }
 
   # Update the OS only if the file /var/opt/last_update_stamp_from_puppet does not exists (unless).
   # The file /var/opt/last_update_stamp_from_puppet will be deleted every Monday at 12:00 by root's cron
@@ -64,13 +111,6 @@ class base {
 	creates		=> "/home/${username}/Workspace/vaio_ubuntu_setup",
     user		=> "${username}",
     environment	=> ["HOME=/home/${username}"],
-    logoutput	=> on_failure,
-  }
-
-  # Install Google Chorme
-  exec { "dpkg install google-chrome":
-    command		=> "wget -O /tmp/google-chrome-stable_current_amd64.deb $google_chrome_url && dpkg --install /tmp/google-chrome-stable_current_amd64.deb",
-    creates		=> "/opt/google/chrome/google-chrome",
     logoutput	=> on_failure,
   }
 

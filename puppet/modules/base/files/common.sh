@@ -4,6 +4,7 @@
 # Description: 
 #=======================================================================================================
 
+declare -r SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 declare -r SCRIPT_NAME="$( basename "$0" )"
 declare -r LOG_FILE=/tmp/${SCRIPT_NAME%.*}_$$.log
 
