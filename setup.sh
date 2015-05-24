@@ -26,10 +26,8 @@ declare -r VMWARE_HORIZON_CLIENT_URL="https://download3.vmware.com/software/view
 declare -r SETUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 source "${SETUP_DIR}/puppet/modules/base/files/common.sh"
 
-[[ $EUID -ne 0 ]] && error "This script must be run as root. Not with sudo" && exit 1
-
 init () {
-  
+  ## [[ $EUID -ne 0 ]] && error "This script must be run as root. Not with sudo" && exit 1
 
   > "${LOG_FILE}"
   info "Starting setup"
@@ -44,10 +42,10 @@ install_Puppet () {
   info "Installing puppet"
 
   wget -O /tmp/puppetlabs-release.deb ${PUPPET_URL}
-  dpkg -i /tmp/puppetlabs-release.deb
-  apt-get update
-  apt-get install -y puppet
-  sed -i.bkp 's/^127.0.1.1\tvaio$/127.0.1.1\tvaio.johandry.com\tvaio/' /etc/hosts
+  sudo dpkg -i /tmp/puppetlabs-release.deb
+  sudo apt-get update
+  sudo apt-get install -y puppet
+  sudo sed -i.bkp 's/^127.0.1.1\tvaio$/127.0.1.1\tvaio.johandry.com\tvaio/' /etc/hosts
 
   [[ "$(/usr/bin/puppet --version)" == "${PUPPET_VERSION}" ]] && ok "Puppet ${PUPPET_VERSION} successfuly installed" && return 0
   error "Puppet ${PUPPET_VERSION} install have failed"
@@ -63,17 +61,17 @@ install_manifests_n_modules () {
 
   BKP_DATE=$(date +"%m%d%Y%H%M%S")
 
-  mv /etc/puppet/manifests /etc/puppet/manifests.$BKP_DATE
-  mv /etc/puppet/modules   /etc/puppet/modules.$BKP_DATE
-  cp -a "${SCRIPT_DIR}/puppet/manifests" /etc/puppet/
-  cp -a "${SCRIPT_DIR}/puppet/modules"   /etc/puppet/
-  chown -R root.root /etc/puppet/manifests
-  chown -R root.root /etc/puppet/modules
+  sudo mv /etc/puppet/manifests /etc/puppet/manifests.$BKP_DATE
+  sudo mv /etc/puppet/modules   /etc/puppet/modules.$BKP_DATE
+  sudo cp -a "${SCRIPT_DIR}/puppet/manifests" /etc/puppet/
+  sudo cp -a "${SCRIPT_DIR}/puppet/modules"   /etc/puppet/
+  sudo chown -R root.root /etc/puppet/manifests
+  sudo chown -R root.root /etc/puppet/modules
 
   info "Enter password to decrypt the personal settings file"
   gpg "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh.gpg"
-  mv  "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh" /etc/puppet/modules/base/files/
-  rm  /etc/puppet/modules/base/files/personal-settings.sh.gpg
+  sudo mv  "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh" /etc/puppet/modules/base/files/
+  sudo rm  /etc/puppet/modules/base/files/personal-settings.sh.gpg
 
   [[ -e /etc/puppet/manifests/site.pp && -d /etc/puppet/manifests.$BKP_DATE && -d /etc/puppet/modules.$BKP_DATE ]] && ok "Puppet manifests and modules were installed and backup done with id ${BKP_DATE}" && return 0
   error "Puppet manifests and modules were not installed correctly"
@@ -128,13 +126,17 @@ finish () {
 
 cleanup () {
   info "Deleting old backups of puppet manifests and modules"
-  rm -rf /etc/puppet/modules.*
-  rm -rf /etc/puppet/manifests.*
+  sudo rm -rf /etc/puppet/modules.*
+  sudo rm -rf /etc/puppet/manifests.*
 }
 
 update_personal_settings () {
-  gpg -c /etc/profile.d/personal-settings.sh
-  mv /etc/profile.d/personal-settings.sh.gpg "${SCRIPT_DIR}/puppet/modules/base/files"
+  info "Enter password to encrypt the personal settings file"
+  sudo cp /etc/profile.d/personal-settings.sh ${HOME}
+  sudo chown $USERNAME ${HOME}/personal-settings.sh
+  gpg -c ${HOME}/personal-settings.sh
+  rm -f ${HOME}/personal-settings.sh
+  mv -f ${HOME}/personal-settings.sh.gpg "${SCRIPT_DIR}/puppet/modules/base/files"
 }
 
 deploy () {
