@@ -2,7 +2,7 @@ class base {
 
   # Google Chrome URL
   $google_chrome_url	= "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-  $puppet_url			= ""
+  $puppetlabs_url		= "https://apt.puppetlabs.com/puppetlabs-release-utopic.deb"
 
 
   # Make sure the user was created
@@ -20,7 +20,7 @@ class base {
 
   # Make sure puppet is installed
   exec { "dpkg install puppetlabs repository":
-    command		=> "wget -O /tmp/puppetlabs-release.deb ${puppet_url} && dpkg -i /tmp/puppetlabs-release.deb && apt-get update",
+    command		=> "wget -O /tmp/puppetlabs-release.deb ${puppetlabs_url} && dpkg -i /tmp/puppetlabs-release.deb && apt-get update",
     creates		=> "/etc/apt/sources.list.d/puppetlabs.list",
     logoutput	=> on_failure,
   }
@@ -48,6 +48,14 @@ class base {
     owner		=> "${username}",
     group		=> "${username}",
     source		=> "puppet:///modules/base/vpn.sh",
+  }
+
+  file { "/etc/profile.d/personal-settings.sh":
+    ensure 		=> "file",
+    mode		=> 0640,
+    owner		=> "${username}",
+    group		=> "${username}",
+    source		=> "puppet:///modules/base/personal-settings.sh",
   }
 
   # Update the OS only if the file /var/opt/last_update_stamp_from_puppet does not exists (unless).
