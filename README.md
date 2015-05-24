@@ -45,16 +45,23 @@ git clone https://github.com/johandry/vaio_ubuntu_setup.git /home/$USER/Setup &&
 
 This script - check code [here](https://raw.githubusercontent.com/johandry/vaio_ubuntu_setup/master/setup.sh) - will do:
 
-1. Install Cisco AnyConnect VPN Client 
+1. Install Puppet to automate installations and setups
+1. Execute or Apply the Puppet rules.
 1. Install VMWare Horizon Client
-1. Install MATE Desktop
-1. Install Cinnamon Desktop 
-1. Install Puppet to automate installs
 
-The Puppet Manifest will make sure:
+Puppet will do:
 
+1. Update and upgrade Ubuntu. Make sure this is done every Monday
+1. Create ~/bin directory and copy some scripts
+1. Create a Workspace and clone this project
+1. Install Google Chrome
+1. Install VMWare Horizon Client requirements
 1. Install Docker
-1. Install Packer and Vagrant
-1. Sublime Text 3
-1. 
+1. Install Sublime Text 3
+
+TODO:
+
+* Setup SSH keys
+* Install Packer and Vagrant
+* Install Ruby and rbenv
 

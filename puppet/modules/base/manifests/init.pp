@@ -1,9 +1,6 @@
 class base {
 
-  # Google Chrome URL
-  $google_chrome_url	= "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
   $puppetlabs_url		= "https://apt.puppetlabs.com/puppetlabs-release-utopic.deb"
-
 
   # Make sure the user was created
   user { "${username}":

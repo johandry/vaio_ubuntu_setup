@@ -122,6 +122,8 @@ setup () {
 finish () {
   END_T=$(date +%s)
   info "Setup completed in $(($END_T - $START_T)) seconds"
+
+  rm -rf /home/$USERNAME/Setup
 }
 
 cleanup () {
@@ -148,7 +150,7 @@ deploy () {
 
   cd "${SCRIPT_DIR}"
   git add .
-  git commit -m "${1}"
+  git commit -a -m "${1}"
   git push origin master
 }
 

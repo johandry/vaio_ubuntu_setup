@@ -1,3 +1,5 @@
+# Cisco AnyConnect is not longer needed, it was replaced by OpenConnect, but keep this script just in case.
+
 install_Cisco_AnyConnect_VPN_Client () {
   if [[ -e /opt/cisco/anyconnect/bin/vpnui ]]
     then

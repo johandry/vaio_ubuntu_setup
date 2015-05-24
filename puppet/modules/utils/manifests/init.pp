@@ -2,7 +2,9 @@ class utils {
 
   # VMWare Horizon Client URL
   $vmware_horizon_client_url	= "https://download3.vmware.com/software/view/viewclients/CART14Q4/VMware-Horizon-Client-3.2.0-2331566.x86.bundle"
-
+  # Google Chrome URL
+  $google_chrome_url  = "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+  
   # Install Network Manager OpenConnect
   package { [ "network-manager-openconnect-gnome", "network-manager-openconnect"]:
     ensure		=> "latest",
