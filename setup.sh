@@ -26,6 +26,8 @@ declare -r VMWARE_HORIZON_CLIENT_URL="https://download3.vmware.com/software/view
 declare -r SETUP_DIR="$( cd "$( dirname "$0" )" && pwd )"
 source "${SETUP_DIR}/puppet/modules/base/files/common.sh"
 
+GPG_PASSWD=
+
 init () {
   ## [[ $EUID -ne 0 ]] && error "This script must be run as root. Not with sudo" && exit 1
 
@@ -66,12 +68,32 @@ install_manifests_n_modules () {
   sudo cp -a "${SCRIPT_DIR}/puppet/manifests" /etc/puppet/
   sudo cp -a "${SCRIPT_DIR}/puppet/modules"   /etc/puppet/
   sudo chown -R root.root /etc/puppet/manifests
-  sudo chown -R root.root /etc/puppet/modules
+  sudo chown -R root.root /etc/puppet/modulesVPN_connection.gpg
 
   info "Enter password to decrypt the personal settings file"
-  gpg "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh.gpg"
+  if [[ -n "${GPG_PASSWD}" ]]
+    then
+    echo "${GPG_PASSWD}" | gpg --passphrase-fd 0 "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh.gpg"
+  else
+    gpg "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh.gpg"
+  fi
+  # Move the decrypted file to puppet module, it cannot be in the project repository
   sudo mv  "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh" /etc/puppet/modules/base/files/
+  # Remove the encrypted files from puppet modules, it is in the project repository
   sudo rm  /etc/puppet/modules/base/files/personal-settings.sh.gpg
+
+  info "Enter password to decrypt the VPN configuration file"
+  if [[ -n "${GPG_PASSWD}" ]]
+    then
+    echo "${GPG_PASSWD}" | gpg --passphrase-fd 0 "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection.gpg"
+  else
+    gpg "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection.gpg"
+  fi
+  
+  # Move the decrypted file to puppet module, it cannot be in the project repository
+  sudo mv  "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection" "/etc/puppet/modules/office/files/VPN connection 1"
+  # Remove the encrypted files from puppet modules, it is in the project repository
+  sudo rm  /etc/puppet/modules/office/files/VPN_connection.gpg
 
   [[ -e /etc/puppet/manifests/site.pp && -d /etc/puppet/manifests.$BKP_DATE && -d /etc/puppet/modules.$BKP_DATE ]] && ok "Puppet manifests and modules were installed and backup done with id ${BKP_DATE}" && return 0
   error "Puppet manifests and modules were not installed correctly"
@@ -132,21 +154,29 @@ cleanup () {
   sudo rm -rf /etc/puppet/manifests.*
 }
 
-update_personal_settings () {
+update_encrypted_files () {
   info "Enter password to encrypt the personal settings file"
   sudo cp /etc/profile.d/personal-settings.sh ${HOME}
   sudo chown $USERNAME ${HOME}/personal-settings.sh
   gpg -c ${HOME}/personal-settings.sh
   rm -f ${HOME}/personal-settings.sh
   mv -f ${HOME}/personal-settings.sh.gpg "${SCRIPT_DIR}/puppet/modules/base/files"
+
+  info "Enter password to encrypt the VPN connection file"
+  sudo cp "/etc/NetworkManager/system-connections/VPN connection 1" ${HOME}/VPN_connection
+  sudo chown $USERNAME ${HOME}/VPN_connection
+  gpg -c ${HOME}/VPN_connection
+  rm -f ${HOME}/VPN_connection
+  mv -f ${HOME}/VPN_connection.gpg "${SCRIPT_DIR}/puppet/modules/office/files"
 }
 
 deploy () {
   [[ -z "${1}" ]] && error "Need a commit message to deploy" && exit 1
 
-  update_personal_settings
+  update_encrypted_files
 
-  [[ -e "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh" ]] && error "The personals settings file cannot be deployed to Github" && error 1
+  [[ -e "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh" ]] && error "The personals settings file cannot be deployed to Github" && exit 1
+  [[ -e "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection" ]] && error "The VPN connection file cannot be deployed to Github" && exit 1
 
   cd "${SCRIPT_DIR}"
   git add .
@@ -156,11 +186,16 @@ deploy () {
 
 [[ "${1}" == "--cleanup" ]] && cleanup && exit 0
 
-[[ "${1}" == "--gpg" ]] && update_personal_settings && exit 0
+[[ "${1}" == "--gpg" ]] && update_encrypted_files && exit 0
 
 [[ "${1}" == "--deploy" ]] && deploy "${2}" && exit 0
 
-[[ -n "${1}" ]] && error "Unknown option ${1}" && exit 1
+if [[ "${1}" == "-p" && -n "${2}" ]]
+  then
+  GPG_PASSWD="${2}"
+else
+  [[ -n "${1}" ]] && error "Unknown option ${1}" && exit 1
+fi
 
 init
 setup

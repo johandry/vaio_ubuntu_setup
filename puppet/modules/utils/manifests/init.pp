@@ -69,4 +69,24 @@ class utils {
 
   # The install will continue in the setup.sh script because it's done with a GUI
 
+  # Install Java
+  package { "default-jre":
+    ensure    => "latest",
+  }
+  package { "default-jdk":
+    ensure    => "latest",
+  }
+  package { "icedtea-netx":
+    ensure    => "latest"
+  }
+
+  # Install Evolution (Mail Client)
+  package { ["evolution", "evolution-ews", "evolution-mapi"]:
+    ensure    => "latest",
+  }
+  # Pidgin plugin para Lync
+  package { "pidgin-sipe":
+    ensure    => "latest",
+  }
+  
 }

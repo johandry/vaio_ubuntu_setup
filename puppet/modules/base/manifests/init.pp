@@ -4,14 +4,14 @@ class base {
 
   # Make sure the user was created
   user { "${username}":
-    ensure		=> "present",
+    ensure		  => "present",
     managehome	=> true,
-    groups		=> ['docker'],
+    groups		  => ['docker'],
   }
 
   # Make sure the FQDN is set
   host { "vaio.johandry.com":
-    ip			 => "127.0.1.1",
+    ip			     => "127.0.1.1",
     host_aliases => "vaio",
   }
 
@@ -28,30 +28,23 @@ class base {
 
   file { "/home/${username}/bin":
     ensure		=> "directory",
-    mode		=> 0750,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode		  => 0750,
+    owner		  => "${username}",
+    group		  => "${username}",
   }
   file { "/home/${username}/bin/common.sh":
     ensure 		=> "file",
-    mode		=> 0750,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode		  => 0750,
+    owner     => "${username}",
+    group     => "${username}",
     source		=> "puppet:///modules/base/common.sh",
-  }
-  file { "/home/${username}/bin/vpn.sh":
-    ensure 		=> "file",
-    mode		=> 0750,
-    owner		=> "${username}",
-    group		=> "${username}",
-    source		=> "puppet:///modules/base/vpn.sh",
   }
 
   file { "/etc/profile.d/personal-settings.sh":
     ensure 		=> "file",
-    mode		=> 0640,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode		  => 0640,
+    owner	    => "${username}",
+    group	    => "${username}",
     source		=> "puppet:///modules/base/personal-settings.sh",
   }
 
@@ -65,10 +58,10 @@ class base {
   cron { "remove last_update_stamp_from_puppet":
     ensure		=> present,
     command		=> "rm -f /var/opt/last_update_stamp_from_puppet",
-    user		=> "root",
-    hour		=> 12,
+    user		  => "root",
+    hour		  => 12,
     minute		=> 0,
-	weekday		=> "Monday",
+    weekday		=> "Monday",
   }
 
   # Generate SSH Key
@@ -79,42 +72,42 @@ class base {
   }
   file { "/home/${username}/.ssh":
     ensure		=> "directory",
-    mode		=> 0700,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode		  => 0700,
+    owner	    => "${username}",
+    group     => "${username}",
   }
   file { "/home/${username}/.ssh/id_rsa":
     ensure		=> "present",
-    mode		=> 0600,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode		  => 0600,
+    owner	    => "${username}",
+    group	    => "${username}",
   }
   file { "/home/${username}/.ssh/id_rsa.pub":
     ensure		=> "present",
-    mode		=> 0644,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode		  => 0644,
+    owner	    => "${username}",
+    group	    => "${username}",
   }
 
   # Create ~/Workspace and clone github project
   file { "/home/${username}/Workspace":
     ensure		=> "directory",
-    mode 		=> 0750,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode      => 0750,
+    owner     => "${username}",
+    group     => "${username}",
   }
   file { "/home/${username}/.gitconfig":
     ensure 		=> "file",
-    mode		=> 0664,
-    owner		=> "${username}",
-    group		=> "${username}",
+    mode      => 0664,
+    owner     => "${username}",
+    group     => "${username}",
     source		=> "puppet:///modules/base/gitconfig",
   }
   exec { "git clone vaio_ubuntu_setup from GitHub":
-    cwd			=> "/home/${username}/Workspace",
+    cwd       => "/home/${username}/Workspace",
     command		=> "git clone git@github.com:johandry/vaio_ubuntu_setup.git /home/${username}/Workspace/vaio_ubuntu_setup",
-	creates		=> "/home/${username}/Workspace/vaio_ubuntu_setup",
-    user		=> "${username}",
+    creates		=> "/home/${username}/Workspace/vaio_ubuntu_setup",
+    user      => "${username}",
     environment	=> ["HOME=/home/${username}"],
     logoutput	=> on_failure,
   }
