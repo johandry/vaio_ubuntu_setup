@@ -2,27 +2,24 @@
 
 #=======================================================================================================
 # Author: Johandry Amador <johandry@gmail.com>
-# Title:  Open Q Messenger
+# Title:  Connect to the Office
 # Usage: ${script_name} [--help]
 #
 # Options:
 #     -h, --help    Display this help message.
 #
-# Description: 
+# Description: Will connect to VPN and open all required programs to connect to the Office
 #
 # Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/ 
 #=======================================================================================================
 
 source "/home/${USER}/bin/common.sh"
 
-/home/${USER}/bin/vpn.sh --status
+# If VPN is already connected will not connect again
+/home/${USER}/bin/vpn.sh --connect 
 
-VPNConnected=$?
+# If Q Messenger is running, will not run again
+/home/${USER}/bin/qmsgr.sh
 
-[[ ${VPNConnected} -ne 0 ]] && error "Looks like VPN is not connected" && exit 1
-
-QMSGR_PID=$( ps -fea | grep java | grep 'q.att.com' | head -1 | awk '{print $2}' )
-
-[[ -n "${QMSGR_PID}" ]] && error "Looks like Q Messenger is already running with PID $QMSGR_PID" && exit 1
-
-/usr/bin/javaws http://startup.q.att.com/startup/webstart/q.jnlp &>"${LOG_FILE}" &
+# If VMWare Horizon is running, will not run again
+/home/${USER}/bin/desktop.sh

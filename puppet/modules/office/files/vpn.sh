@@ -31,7 +31,7 @@ connect () {
 
   sudo su -c "echo -ne '${VPN_PASSWD}\npush' | openconnect -u ${VPN_USER} ${VPN_GATEWAY} &"
 
-  VPN_PID=$(ps -fea | grep '/usr/sbin/openconnect' | grep -v grep | awk '{print $2}')
+  VPN_PID=$( ps -fea | grep 'openconnect' | grep -v grep | head -1 | awk '{print $2}' )
   echo "${VPN_PID}" > "${VPN_PID_FILE}"
 }
 
@@ -40,13 +40,13 @@ disconnect () {
 
   sudo kill -9 ${VPN_PID} && ok "VPN disconnected"
 
-  VPN_PID=$(ps -fea | grep '/usr/sbin/openconnect' | grep -v grep | awk '{print $2}')
+  VPN_PID=$( ps -fea | grep 'openconnect' | grep -v grep | head -1 | awk '{print $2}' )
   echo "${VPN_PID}" > "${VPN_PID_FILE}"
   [[ -n "${VPN_PID}" ]] && error "VPN could not be disconnected (${VPN_PID})"
 }
 
 status () {
-  VPN_PID_NOW=$(ps -fea | grep '/usr/sbin/openconnect' | grep -v grep | awk '{print $2}')
+  VPN_PID_NOW=$( ps -fea | grep 'openconnect' | grep -v grep | head -1 | awk '{print $2}' )
   [[ -n "${VPN_PID_NOW}" ]] && msg="VPN is connected"     && exit_code=0
   [[ -z "${VPN_PID_NOW}" ]] && msg="VPN is not connected" && exit_code=1
 

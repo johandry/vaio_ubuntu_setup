@@ -37,6 +37,13 @@ init () {
 
   setupGithub=
   [[ ! -e /home/${USERNAME}/.ssh/id_rsa.pub ]] && setupGithub=true
+
+  if [[ -z "${GPG_PASSWD}" ]]
+    then
+    info "Enter GPG password to encrypt files"
+    read -p "GPG Password: " -r -s GPG_PASSWD
+    echo
+  fi
 }
 
 install_Puppet () {
@@ -68,13 +75,13 @@ install_manifests_n_modules () {
   sudo cp -a "${SCRIPT_DIR}/puppet/manifests" /etc/puppet/
   sudo cp -a "${SCRIPT_DIR}/puppet/modules"   /etc/puppet/
   sudo chown -R root.root /etc/puppet/manifests
-  sudo chown -R root.root /etc/puppet/modulesVPN_connection.gpg
+  sudo chown -R root.root /etc/puppet/modules
 
-  info "Enter password to decrypt the personal settings file"
   if [[ -n "${GPG_PASSWD}" ]]
     then
     echo "${GPG_PASSWD}" | gpg --passphrase-fd 0 "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh.gpg"
   else
+    info "Enter password to decrypt the personal settings file"
     gpg "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh.gpg"
   fi
   # Move the decrypted file to puppet module, it cannot be in the project repository
@@ -82,11 +89,11 @@ install_manifests_n_modules () {
   # Remove the encrypted files from puppet modules, it is in the project repository
   sudo rm  /etc/puppet/modules/base/files/personal-settings.sh.gpg
 
-  info "Enter password to decrypt the VPN configuration file"
   if [[ -n "${GPG_PASSWD}" ]]
     then
     echo "${GPG_PASSWD}" | gpg --passphrase-fd 0 "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection.gpg"
   else
+    info "Enter password to decrypt the VPN configuration file"
     gpg "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection.gpg"
   fi
   
@@ -190,12 +197,9 @@ deploy () {
 
 [[ "${1}" == "--deploy" ]] && deploy "${2}" && exit 0
 
-if [[ "${1}" == "-p" && -n "${2}" ]]
-  then
-  GPG_PASSWD="${2}"
-else
-  [[ -n "${1}" ]] && error "Unknown option ${1}" && exit 1
-fi
+[[ "${1}" == "-p" && -n "${2}" ]] && GPG_PASSWD="${2}"
+
+[[ "${1}" != "-p" && -n "${1}" ]] && error "Unknown option ${1}" && exit 1
 
 init
 setup

@@ -80,13 +80,13 @@ class utils {
     ensure    => "latest"
   }
 
-  # Install Evolution (Mail Client)
-  package { ["evolution", "evolution-ews", "evolution-mapi"]:
-    ensure    => "latest",
-  }
-  # Pidgin plugin para Lync
-  package { "pidgin-sipe":
-    ensure    => "latest",
-  }
+  # # Install Evolution (Mail Client)
+  # package { ["evolution", "evolution-ews", "evolution-mapi"]:
+  #   ensure    => "latest",
+  # }
+  # # Pidgin plugin para Lync
+  # package { "pidgin-sipe":
+  #   ensure    => "latest",
+  # }
   
 }

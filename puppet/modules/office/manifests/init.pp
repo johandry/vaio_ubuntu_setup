@@ -24,6 +24,14 @@ class office {
     source	=> "puppet:///modules/office/desktop.sh",
     require => File["/home/${username}/bin"],
   }
+  file { "/home/${username}/bin/connect2office.sh":
+    ensure	=> "file",
+    mode		=> 0750,
+    owner		=> "${username}",
+    group		=> "${username}",
+    source	=> "puppet:///modules/office/connect2office.sh",
+    require => File["/home/${username}/bin"],
+  }
   file { "/etc/NetworkManager/system-connections/VPN connection 1":
     ensure	=> "file",
     mode		=> 0600,
