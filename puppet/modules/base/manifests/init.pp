@@ -1,7 +1,5 @@
 class base {
 
-  $puppetlabs_url		= "https://apt.puppetlabs.com/puppetlabs-release-utopic.deb"
-
   # Make sure the user was created
   user { "${username}":
     ensure		  => "present",
@@ -25,6 +23,11 @@ class base {
     ensure		=> "latest",
     require		=> Exec['dpkg install puppetlabs repository'],
   }
+  # Puppet requirements
+  # package { "hiera-gpg"
+  #   ensure    => "installed",
+  #   provider  => "gem",
+  # }
 
   file { "/home/${username}/bin":
     ensure		=> "directory",
@@ -40,6 +43,14 @@ class base {
     source		=> "puppet:///modules/base/common.sh",
   }
 
+  file { "/home/${username}/.bashrc":
+    ensure    => "file",
+    mode      => 0644,
+    owner     => "${username}",
+    group     => "${username}",
+    source    => "puppet:///modules/base/bashrc",
+  }
+
   file { "/etc/profile.d/personal-settings.sh":
     ensure 		=> "file",
     mode		  => 0640,
@@ -48,16 +59,26 @@ class base {
     source		=> "puppet:///modules/base/personal-settings.sh",
   }
 
-  # Update the OS only if the file /var/opt/last_update_stamp_from_puppet does not exists (unless).
-  # The file /var/opt/last_update_stamp_from_puppet will be deleted every Monday at 12:00 by root's cron
+  # Apply the puppet rules every 2 hours
+  cron { "apply puppet rules every 2 hours":
+    ensure    => present,
+    command   => "puppet apply -v /etc/puppet/manifests/site.pp",
+    user      => "root",
+    hour      => '*/2',
+    minute    => 0,
+  }
+
+
+  # Update the OS only if the file /tmp/last_update_stamp_from_puppet does not exists (unless).
+  # The file /tmp/last_update_stamp_from_puppet will be deleted every Monday at 12:00 by root's cron or in every reboot (because it is in /tpm/ which is volatil)
   exec { 'apt-get update':
-    command		=> "apt-get update && apt-get upgrade -y && echo $timestamp > /var/opt/last_update_stamp_from_puppet",
+    command		=> "apt-get update && apt-get upgrade -y && echo $timestamp > /tmp/last_update_stamp_from_puppet",
     logoutput	=> on_failure,
     unless		=> "test -e /var/opt/last_update_stamp_from_puppet",
   }
   cron { "remove last_update_stamp_from_puppet":
     ensure		=> present,
-    command		=> "rm -f /var/opt/last_update_stamp_from_puppet",
+    command		=> "rm -f /tmp/last_update_stamp_from_puppet",
     user		  => "root",
     hour		  => 12,
     minute		=> 0,
@@ -65,28 +86,47 @@ class base {
   }
 
   # Generate SSH Key
-  exec { "ssh-keygen":
-    command		=> "ssh-keygen -q -N '' -f /home/${username}/.ssh/id_rsa -t rsa -b 4096 -C 'Sony VAIO with Ubuntu'",
-    creates		=> "/home/${username}/.ssh/id_rsa",
-    logoutput	=> on_failure,
+  # exec { "ssh-keygen":
+  #   command		=> "ssh-keygen -q -N '' -f /home/${username}/.ssh/id_rsa -t rsa -b 4096 -C '' && ssh-add",
+  #   creates		=> "/home/${username}/.ssh/id_rsa",
+  #   logoutput	=> on_failure,
+  # }
+  exec {"Uncompress ssh-settings":
+    command   => "tar xzf ssh-settings.tar.gz && chown root.root *",
+    cwd       => "/etc/puppet/modules/base/files/",
+    creates   => "/etc/puppet/modules/base/files/id_rsa",
+    logoutput => on_failure,
   }
   file { "/home/${username}/.ssh":
     ensure		=> "directory",
     mode		  => 0700,
     owner	    => "${username}",
     group     => "${username}",
+    require   => Exec["Uncompress ssh-settings"],
   }
   file { "/home/${username}/.ssh/id_rsa":
     ensure		=> "present",
     mode		  => 0600,
     owner	    => "${username}",
     group	    => "${username}",
+    require   => File["/home/${username}/.ssh"],
+    source    => "puppet:///modules/base/id_rsa",
   }
   file { "/home/${username}/.ssh/id_rsa.pub":
     ensure		=> "present",
-    mode		  => 0644,
+    mode		  => 0640,
     owner	    => "${username}",
     group	    => "${username}",
+    require   => File["/home/${username}/.ssh"],
+    source    => "puppet:///modules/base/id_rsa.pub",
+  }
+  file { "/home/${username}/.ssh/config":
+    ensure    => "present",
+    mode      => 0640,
+    owner     => "${username}",
+    group     => "${username}",
+    require   => File["/home/${username}/.ssh"],
+    source    => "puppet:///modules/base/config",
   }
 
   # Create ~/Workspace and clone github project

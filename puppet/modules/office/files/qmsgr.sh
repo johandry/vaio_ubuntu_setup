@@ -15,11 +15,9 @@
 
 source "/home/${USER}/bin/common.sh"
 
-/home/${USER}/bin/vpn.sh --status
-
-VPNConnected=$?
-
-[[ ${VPNConnected} -ne 0 ]] && error "Looks like VPN is not connected" && exit 1
+/home/${USER}/bin/vpn_1.sh --status
+VPN_1_Connected=$?
+[[ ${VPN_1_Connected} -ne 0 ]] && error "Looks like VPN 1 is not connected" && exit 1
 
 QMSGR_PID=$( ps -fea | grep java | grep 'q.att.com' | head -1 | awk '{print $2}' )
 

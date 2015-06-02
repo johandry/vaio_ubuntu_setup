@@ -1,9 +1,4 @@
 class utils {
-
-  # VMWare Horizon Client URL
-  $vmware_horizon_client_url	= "https://download3.vmware.com/software/view/viewclients/CART14Q4/VMware-Horizon-Client-3.2.0-2331566.x86.bundle"
-  # Google Chrome URL
-  $google_chrome_url  = "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
   
   # Install Network Manager OpenConnect
   package { [ "network-manager-openconnect-gnome", "network-manager-openconnect"]:
@@ -70,23 +65,44 @@ class utils {
   # The install will continue in the setup.sh script because it's done with a GUI
 
   # Install Java
-  package { "default-jre":
-    ensure    => "latest",
-  }
-  package { "default-jdk":
-    ensure    => "latest",
-  }
-  package { "icedtea-netx":
+  package { [ "default-jre", "default-jdk", "icedtea-netx", "icedtea-plugin" ]:
     ensure    => "latest"
   }
 
-  # # Install Evolution (Mail Client)
-  # package { ["evolution", "evolution-ews", "evolution-mapi"]:
-  #   ensure    => "latest",
-  # }
+  exec { "install skype":
+    command   => "wget ${skype_url} -O /tmp/skype-ubuntu.deb && dpkg --install /tmp/skype-ubuntu.deb",
+    creates   => "/usr/bin/skype",
+  }
+  exec { "force install skype":
+    command   => "apt-get -f install",
+    creates   => "/usr/bin/skype",
+    require   => Exec["install skype"],
+  }
+
+  exec { "install dropbox":
+    command   => "wget -O /tmp/dropbox.deb $dropbox_url && dpkg --install /tmp/dropbox.deb && /usr/bin/dropbox start -i",
+    creates   => "/usr/bin/dropbox",
+  }
+
+  # Python 
+  package { ["python3", "python3-pip"]:
+    ensure    => "latest",
+  }
+
+  # Install Evolution (Mail Client)
+  package { ["evolution", "evolution-ews", "evolution-mapi"]:
+    ensure    => "latest",
+  }
   # # Pidgin plugin para Lync
   # package { "pidgin-sipe":
   #   ensure    => "latest",
   # }
   
+  # Install Sublime Text 3
+  exec { "download sublime-text":
+    command   => "wget -O /tmp/sublime-text.deb ${sublime_text_url} && dpkg --install /tmp/sublime-text.deb",
+    creates   => "/usr/bin/subl",
+    logoutput => on_failure,
+  }
+  # After this, install the Packages with Sublime Text Package Control because it will update them to the latest version
 }

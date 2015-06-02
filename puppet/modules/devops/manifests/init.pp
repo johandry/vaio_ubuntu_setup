@@ -1,4 +1,4 @@
-class docker {
+class devops {
 
   # docker Group
   group { "docker":

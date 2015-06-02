@@ -15,7 +15,6 @@ node "vaio.johandry.com" {
 
   include base
   include utils
-  include docker
-  include sublime_text
+  include devops
   include office
 }
