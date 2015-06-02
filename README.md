@@ -68,6 +68,7 @@ TODO:
 ## What Next?
 
 After run the setup to install lot of programs, there are some tasks that is better to do manually such as:
+
 1. Download and install a few desktop wallpapers. [Here](http://www.hdwallpapers.in/) is a good site to get them. 
 1. Download and install Sublime Text packages. Package Control will make sure you have the latest version. Use it instead of install them with Puppet. Read the next section for a list of packages to install
 
@@ -75,6 +76,6 @@ After run the setup to install lot of programs, there are some tasks that is bet
 
 Use Package Control to install the packages. Open the Command Pallete (Command+Shift+P on OS X, Control+Shift+P on Linux/Windows). Type "Package Control: Install Package", wait while Package Control fetches the latest package list, then type the name of the package to install and press enter. [Here](https://packagecontrol.io) you can find more packages.
 
-1 [Package Control](https://packagecontrol.io/installation)
-1 [Puppet](https://github.com/russCloak/SublimePuppet)
+1. [Package Control](https://packagecontrol.io/installation)
+1. [Puppet](https://github.com/russCloak/SublimePuppet)
 
