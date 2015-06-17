@@ -1,8 +1,8 @@
 class ssh (
-  $username           = $users::username,
-  $id_rsa_content     = $ssh::id_rsa,
-  $id_rsa_pub_content = $ssh::id_rsa_pub,
-  $ssh_config_content = $ssh::config
+  $username  = $users::username,
+  $id_rsa,
+  $id_rsa_pub,
+  $config
 ) {
 
   package { 'openssh-server':
@@ -35,7 +35,7 @@ class ssh (
     owner     => $username,
     group     => $username,
     require   => File["/home/${username}/.ssh"],
-    content   => $id_rsa_content,
+    content   => $id_rsa,
   }
   file { "/home/${username}/.ssh/id_rsa.pub":
     ensure    => "present",
@@ -43,7 +43,7 @@ class ssh (
     owner     => $username,
     group     => $username,
     require   => File["/home/${username}/.ssh"],
-    content   => $id_rsa_pub_content,
+    content   => $id_rsa_pub,
   }
   file { "/home/${username}/.ssh/config":
     ensure    => "present",
@@ -51,6 +51,37 @@ class ssh (
     owner     => $username,
     group     => $username,
     require   => File["/home/${username}/.ssh"],
-    content   => $ssh_config_content,
+    content   => $config,
+  }
+
+  file { "/root/.ssh":
+    ensure    => "directory",
+    mode      => 0700,
+    owner     => root,
+    group     => root,
+  }
+  file { "/root/.ssh/id_rsa":
+    ensure    => "present",
+    mode      => 0600,
+    owner     => root,
+    group     => root,
+    require   => File["/root/.ssh"],
+    content   => $id_rsa,
+  }
+  file { "/root/.ssh/id_rsa.pub":
+    ensure    => "present",
+    mode      => 0640,
+    owner     => root,
+    group     => root,
+    require   => File["/root/.ssh"],
+    content   => $id_rsa_pub,
+  }
+  file { "/root/.ssh/config":
+    ensure    => "present",
+    mode      => 0640,
+    owner     => root,
+    group     => root,
+    require   => File["/root/.ssh"],
+    content   => $config,
   }
 }

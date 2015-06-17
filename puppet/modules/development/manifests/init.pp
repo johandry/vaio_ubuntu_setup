@@ -1,6 +1,6 @@
 class development (
   $username           = $users::username,
-  $sublime_text_url   = $development::sublime_text_url
+  $sublime_text_url
 ) {
 
   file { "/home/${username}/Workspace":

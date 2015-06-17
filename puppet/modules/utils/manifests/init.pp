@@ -1,7 +1,7 @@
 class utils (
-  $google_chrome_url  = $utils::google_chrome_url,
-  $skype_url          = $utils::skype_url,
-  $dropbox_url        = $utils::dropbox_url
+  $google_chrome_url,
+  $skype_url,
+  $dropbox_url
 ){
 
   # Install Google Chorme

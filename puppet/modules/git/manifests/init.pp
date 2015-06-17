@@ -1,11 +1,18 @@
 class git (
-  $ssh_git_authorized_keys_content  = $git::ssh_git_authorized_keys
+  $git_id_rsa_pub  = $ssh::id_rsa_pub
 ) {
 
   package { 'git':
     ensure => installed,
   }
 
+  file { '/var/git':
+    ensure  => directory,
+    mode    => 0755,
+    owner   => 'git',
+    group   => 'git',
+  }
+  
   user { 'git':
     ensure      => present,
     comment     => 'Git',
@@ -30,6 +37,6 @@ class git (
     owner     => git,
     group     => git,
     require   => File["/var/git/.ssh"],
-    content   => $ssh_git_authorized_keys_content,
+    content   => $git_id_rsa_pub,
   }
 }

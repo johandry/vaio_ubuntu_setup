@@ -98,11 +98,23 @@ pkcs7_private_key: '/home/${username}/.eyaml/keys/private_key.pkcs7.pem'
     source    => "puppet:///modules/puppet/public_key.pkcs7.pem",
   }
 
-  # exec { 'git init puppet':
-  #   command   => "git init --bare puppet.git",
-  #   creates   => "/var/git/puppet.git",
-  #   cwd       => "/var/git",
-  #   require   => 
-  # }
+  exec { 'git init puppet':
+    command   => "git init --bare puppet && \
+cd /home/${username}/Workspace/vaio_ubuntu_setup/puppet && \
+git remote add origin git@localhost:/var/git/puppet && \
+git add . && \
+git commit -m 'Initial Commit' && \
+git push origin master",
+    creates   => "/var/git/puppet",
+    cwd       => "/var/git",
+    require   => [ Package["git"], Exec['git clone vaio_ubuntu_setup from GitHub'] ],
+  }
+  file { '/var/git/puppet':
+    ensure    => "directory",
+    mode      => 0755,
+    owner     => 'git',
+    group     => 'git',
+    require   => Exec['git init puppet']
+  }
 
 }
