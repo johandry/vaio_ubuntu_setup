@@ -19,10 +19,12 @@ serverff () {
 
   [[ -z ${1} ]] && cat "${FF_SERVER_FILE}"
 }
+export -f serverff
 
 serversl () {
   echo "TODO"
 }
+export -f serversl
 
 ffssh () {
   [[ -z "${1}" ]] && error "A server partial or full name is required" && return 1
@@ -44,11 +46,14 @@ ffssh () {
   info "Login into ${server}"
   ssh -q ${UNIX_USER}@${server}
 }
+export -f ffssh
 
 slssh () {
   echo "TODO"
 }
+export -f slssh
 
 mssh () {
   echo "TODO"
 }
+export -f mssh
