@@ -1,0 +1,16 @@
+#=======================================================================================================
+# Author: Johandry Amador <johandry@gmail.com>
+# Title:  Configuration variables
+#
+# Usage: 
+#   File to be placed in /etc/profile.d/ so it can be loaded by the /etc/profile
+# 
+# Description: This file contain configuration variables with sensitive information to be loaded from /etc/profile. The data have to be encrypted in Github.
+# 
+# Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/
+#=======================================================================================================
+
+export SKYPE_USER=<%= @skype_username %>
+export SKYPE_PASSWD=<%= @skype_passwd %>
+
+export GPG_PASSWD=<%= @gpg_passwd %>

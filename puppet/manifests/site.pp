@@ -6,15 +6,31 @@ File {
 }
 
 # Set defaults for path in executions
-Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin" ] }
+Exec { 
+  path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/", "/usr/local/bin" ] 
+}
+
+stage {'init': }
+stage {'finish': }
+
+Stage['init'] -> Stage['main'] -> Stage['finish']
 
 node "vaio.johandry.com" {
 
-  $username		= johandry
-  $timestamp	= generate('/bin/date', '+%m%d%Y_%H:%M:%S')
+  $timestamp  = generate('/bin/date', '+%m%d%Y_%H:%M:%S')
 
-  include base
+  # include base
+  include users
+  include networking
+  include ssh
+  include git
+  include puppet
+  
   include utils
+  include scripts
+
+  include development
   include devops
+
   include office
 }

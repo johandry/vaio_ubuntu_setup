@@ -24,9 +24,9 @@ echo "${SKYPE_USER}" "${SKYPE_PASSWD}" | /usr/bin/skype --pipelogin &>"${LOG_FIL
 VPN_1_Connected=$?
 [[ ${VPN_1_Connected} -eq 1 ]] && /home/${USER}/bin/vpn_1.sh --connect 
 
-/home/${USER}/bin/vpn_2.sh --status
-VPN_2_Connected=$?
-[[ ${VPN_2_Connected} -eq 1 ]] && /home/${USER}/bin/vpn_2.sh --connect 
+# /home/${USER}/bin/vpn_2.sh --status
+# VPN_2_Connected=$?
+# [[ ${VPN_2_Connected} -eq 1 ]] && /home/${USER}/bin/vpn_2.sh --connect 
 
 # If Q Messenger is running, will not run again
 /home/${USER}/bin/qmsgr.sh

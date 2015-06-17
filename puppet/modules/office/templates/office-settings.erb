@@ -1,0 +1,31 @@
+#=======================================================================================================
+# Author: Johandry Amador <johandry@gmail.com>
+# Title:  Configuration variables
+#
+# Usage: 
+#   File to be placed in /etc/profile.d/ so it can be loaded by the /etc/profile
+# 
+# Description: This file contain configuration variables with sensitive information to be loaded from /etc/profile. The data have to be encrypted in Github.
+# 
+# Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/
+#=======================================================================================================
+
+export VPN_1_GATEWAY=<%= @vpn_1_gateway %>
+export VPN_1_USER=<%= @vpn_1_username %>
+export VPN_1_PASSWD=<%= @vpn_1_passwd %>
+
+export VPN_2_GATEWAY=<%= @vpn_2_gateway %>
+export VPN_2_USER=<%= @vpn_2_username %>
+export VPN_2_PASSWD=<%= @vpn_2_passwd %>
+
+export WIN_USER=<%= @win_username %>
+export WIN_PASSWD=<%= @win_passwd %>
+export WIN_DOMAIN=<%= @win_domain %>
+export WIN_SERVER_URL=<%= @win_server_url %>
+export WIN_DESKTOP=<%= @win_desktop %>
+
+export UNIX_USER=<%= @unix_username %>
+export UNIX_FF_DOMAIN=<%= @unix_ff_domainname %>
+export UNIX_SL_DOMAIN=<%= @unix_sl_domainname %>
+
+export PUPPET_FF=<%= @puppet_ff_hostname %>.${UNIX_FF_DOMAIN}

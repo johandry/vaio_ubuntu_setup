@@ -58,11 +58,17 @@ Puppet will do:
 1. Install VMWare Horizon Client requirements
 1. Install Docker
 1. Install Sublime Text 3
+1. Install and configure VPN clients
+1. Install IM such as Skype and Q Messenger
+1. Install SSH Keys
+1. Install several useful scripts and the bashrc
+1. Install Dropbox
+1. Install Evolution
+
 
 TODO:
 
-* Setup SSH keys
-* Install Packer and Vagrant
+* Install VirtualBox, Packer and Vagrant
 * Install Ruby and rbenv
 
 ## What Next?
@@ -72,10 +78,11 @@ After run the setup to install lot of programs, there are some tasks that is bet
 1. Download and install a few desktop wallpapers. [Here](http://www.hdwallpapers.in/) is a good site to get them. 
 1. Download and install Sublime Text packages. Package Control will make sure you have the latest version. Use it instead of install them with Puppet. Read the next section for a list of packages to install
 
-## Sublime Text 3 Packages
+### Sublime Text 3 Packages
 
-Use Package Control to install the packages. Open the Command Pallete (Command+Shift+P on OS X, Control+Shift+P on Linux/Windows). Type "Package Control: Install Package", wait while Package Control fetches the latest package list, then type the name of the package to install and press enter. [Here](https://packagecontrol.io) you can find more packages.
+Use Package Control to install the packages. Open the Command Pallete (Command+Shift+P on OS X, Control+Shift+P on Linux/Windows). Type "Package Control: Install Package", wait while Package Control fetches the latest package list, then type the name of the package to install and press enter.
 
 1. [Package Control](https://packagecontrol.io/installation)
 1. [Puppet](https://github.com/russCloak/SublimePuppet)
 
+[Here](https://packagecontrol.io) you can find more packages.

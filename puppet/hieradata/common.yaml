@@ -1,8 +1,11 @@
 ---
-base::puppetlabs_url: 				"https://apt.puppetlabs.com/puppetlabs-release-utopic.deb"
+puppet::puppetlabs_url:           "https://apt.puppetlabs.com/puppetlabs-release-utopic.deb"
 
-utils::vmware_horizon_client_url:	"https://download3.vmware.com/software/view/viewclients/CART14Q4/VMware-Horizon-Client-3.2.0-2331566.x86.bundle"
-utils::google_chrome_url:			"https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-utils::skype_url:					"http://www.skype.com/go/getskype-linux-beta-ubuntu-64"
-utils::dropbox_url:					"https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_2015.02.12_amd64.deb"
-utils::sublime_text_url:		"http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3083_amd64.deb"
+utils::google_chrome_url:         "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+utils::skype_url:                 "http://www.skype.com/go/getskype-linux-beta-ubuntu-64"
+utils::dropbox_url:               "https://www.dropbox.com/download?dl=packages/ubuntu/dropbox_2015.02.12_amd64.deb"
+
+development::sublime_text_url:     "http://c758482.r82.cf2.rackcdn.com/sublime-text_build-3083_amd64.deb"
+
+office::vmware_horizon_client_url: "https://download3.vmware.com/software/view/viewclients/CART14Q4/VMware-Horizon-Client-3.2.0-2331566.x86.bundle"
+office::sl_vpn_url:                "http://speedtest.dal05.softlayer.com/array/ArrayNetworksL3VPN_LINUX.zip"
