@@ -106,6 +106,7 @@ setup () {
 
   info "Setting puppet modules for the first time"
   sudo cp -a ${SCRIPT_DIR}/puppet/* /etc/puppet
+  sudo chown -R root.root /etc/puppet
 
   decrypt_keys
 
