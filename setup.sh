@@ -109,12 +109,8 @@ cleanup () {
 
 deploy () {
   [[ -z "${1}" ]] && error "Need a commit message to deploy" && exit 1
-
-  update_encrypted_files
-
-  [[ -e "${SCRIPT_DIR}/puppet/modules/base/files/personal-settings.sh" ]] && error "The personals settings file cannot be deployed to Github" && exit 1
-  [[ -e "${SCRIPT_DIR}/puppet/modules/office/files/VPN_connection" ]] && error "The VPN connection file cannot be deployed to Github" && exit 1
-
+  TO_DELETE=$( git ls-files --delete )
+  [[ -n ${TO_DELETE} ]] && git rm "${TO_DELETE}"
   cd "${SCRIPT_DIR}"
   git add .
   git commit -a -m "${1}"
