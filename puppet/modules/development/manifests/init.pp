@@ -34,6 +34,15 @@ class development (
     logoutput => on_failure,
   }
 
+  exec { "git clone johandry.com from GitHub":
+    cwd       => "/home/${username}/Workspace",
+    command   => "git clone git@github.com:johandry/johandry.github.io.git /home/${username}/Workspace/johandry.com",
+    creates   => "/home/${username}/Workspace/johandry.com",
+    user      => $username,
+    environment => ["HOME=/home/${username}"],
+    logoutput => on_failure,
+  }
+
   # Install Python 
   package { ["python3", "python3-pip"]:
     ensure    => "latest",

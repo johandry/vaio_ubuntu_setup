@@ -41,12 +41,16 @@ update_puppet () {
   info "Installing latest puppet rules"
 
   cd "${SCRIPT_DIR}/puppet"
+  git_remote=$( git remote -v | grep /var/git/puppet )
+  [[ -z ${git_remote} ]] && git remote add origin /var/git/puppet
   git add .
   git commit -m "Update"
-  git push origin master
+  sudo git push origin master
+  echo tt
 
   cd /etc/puppet
   sudo git pull origin master 
+  echo test
 
   [[ -e /etc/puppet/manifests/site.pp ]] && ok "Puppet manifests is set" && return 0
   error "Puppet manifests was not set"
