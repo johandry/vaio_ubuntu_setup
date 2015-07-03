@@ -10,38 +10,42 @@
 # Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/
 #=======================================================================================================
 
-export FF_SERVER_FILE="/home/$USER/.ffservers.lst"
+export FF_SERVER_FILE="/home/$USER/.serverffs.lst"
 
-export SL_SERVER_FILE="/home/$USER/.slservers.lst"
+export SL_SERVER_FILE="/home/$USER/.serversls.lst"
 
 serverff () {
-  [[ ${1} == "--refresh" ]] && ssh -q ${UNIX_USER}@/${PUPPET_FF} "sudo rake -f /usr/share/puppet-dashboard/Rakefile RAILS_ENV=production node:list" | sort | grep -v "/opt/bmc" | grep -v '(in /' > "${FF_SERVER_FILE}"
+  [[ ${1} == "--refresh" ]] && info "Updating the FF servers from Puppet" && ssh -q ${UNIX_USER}@${PUPPET_FF} "sudo rake -f /usr/share/puppet-dashboard/Rakefile RAILS_ENV=production node:list" | sort | grep -v "/opt/bmc" | grep -v '(in /' > "${FF_SERVER_FILE}"
 
   [[ -z ${1} ]] && cat "${FF_SERVER_FILE}"
 }
 export -f serverff
 
 serversl () {
-  echo "TODO"
+  [[ ${1} == "--refresh" ]] && info "Updating the SL servers from Puppet" && ssh -q ${UNIX_USER}@${PUPPET_SL} "sudo rake -f /usr/share/puppet-dashboard/Rakefile RAILS_ENV=production node:list" | sort > "${SL_SERVER_FILE}"
+
+  [[ -z ${1} ]] && cat "${SL_SERVER_FILE}"
 }
 export -f serversl
 
 ffssh () {
-  [[ -z "${1}" ]] && error "A server partial or full name is required" && return 1
+  server_name=${1}
+  [[ -z "${server_name}" ]] && warn "A server partial or full name is required. Using the default server" && server_name=${UNIX_FF_DEFAULT_SERVER}
+
 
   # If servers list file does not exists or it is older than 7 days, recreate the list
   [[ ! -e "${FF_SERVER_FILE}" || $(( `date +%s` - `stat -L --format %Y "${FF_SERVER_FILE}"` )) -gt $(( 7*24*60*60 )) ]] && serverff --refresh
 
-  if [[ $( grep "${1}" "${FF_SERVER_FILE}" | wc -l ) -gt 1 ]]
+  if [[ $( grep "${server_name}" "${FF_SERVER_FILE}" | wc -l ) -gt 1 ]]
     then
-    warn "Try a longer partial name, there are more than one server matching with '${1}':"
-    grep "${1}" "${FF_SERVER_FILE}" | sed "s/\.${UNIX_FF_DOMAIN}//" | sed 's/^/*  /'
+    warn "Try a longer partial name, there are more than one server matching with '${server_name}':"
+    grep "${server_name}" "${FF_SERVER_FILE}" | sed "s/\.${UNIX_FF_DOMAIN}//" | sed 's/^/*  /'
     return 1
   fi
 
-  server=$( grep "${1}" "${FF_SERVER_FILE}" )
+  server=$( grep "${server_name}" "${FF_SERVER_FILE}" )
 
-  [[ -z ${server} ]] && warn "There is no server with '${1}' in the name" && return 1
+  [[ -z ${server} ]] && warn "There is no server with '${server_name}' in the name" && return 1
 
   info "Login into ${server}"
   ssh -q ${UNIX_USER}@${server}
@@ -49,7 +53,25 @@ ffssh () {
 export -f ffssh
 
 slssh () {
-  echo "TODO"
+  server_name=${1}
+  [[ -z "${server_name}" ]] && warn "A server partial or full name is required. Using the default server" && server_name=${UNIX_SL_DEFAULT_SERVER}
+
+  # If servers list file does not exists or it is older than 7 days, recreate the list
+  [[ ! -e "${SL_SERVER_FILE}" || $(( `date +%s` - `stat -L --format %Y "${SL_SERVER_FILE}"` )) -gt $(( 7*24*60*60 )) ]] && serversl --refresh
+
+  if [[ $( grep "${server_name}" "${SL_SERVER_FILE}" | wc -l ) -gt 1 ]]
+    then
+    warn "Try a longer partial name, there are more than one server matching with '${server_name}':"
+    grep "${server_name}" "${SL_SERVER_FILE}" | sed "s/\.${UNIX_SL_DOMAIN}//" | sed 's/^/*  /'
+    return 1
+  fi
+
+  server=$( grep "${server_name}" "${SL_SERVER_FILE}" )
+
+  [[ -z ${server} ]] && warn "There is no server with '${server_name}' in the name" && return 1
+
+  info "Login into ${server}"
+  ssh -q ${UNIX_USER}@${server}
 }
 export -f slssh
 

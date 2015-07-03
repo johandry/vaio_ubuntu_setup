@@ -1,0 +1,32 @@
+#/bin/env bash
+
+#=======================================================================================================
+# Author: Johandry Amador <johandry@gmail.com>
+# Title:  Open VMWare Horizon Client
+# Usage: ${script_name} [--help]
+#
+# Options:
+#     -h, --help    Display this help message.
+#
+# Description: 
+#
+# Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/ 
+#=======================================================================================================
+
+source "/home/${USER}/bin/common.sh"
+
+[[ -z "$WIN_SL_USER" ]]       && error "WIN_USER variable is not defined"       && exit 1 
+[[ -z "$WIN_SL_PASSWD" ]]     && error "WIN_PASSWD variable is not defined"     && exit 1
+[[ -z "$WIN_SL_DOMAIN" ]]     && error "WIN_DOMAIN variable is not defined"     && exit 1
+[[ -z "$WIN_SL_SERVER_URL" ]] && error "WIN_SERVER_URL variable is not defined" && exit 1 
+[[ -z "$WIN_SL_DESKTOP" ]]    && error "WIN_DESKTOP variable is not defined"    && exit 1
+
+# /home/${USER}/bin/vpnsl --status
+# VPN_SL_Connected=$?
+# [[ ${VPN_SL_Connected} -ne 0 ]] && error "Looks like VPN SL is not connected" && exit 1
+
+VMWV_PID=$( ps -fea | grep vmware-view | grep -v grep | awk '{print $2}' )
+
+[[ -n "${VMWV_PID}" ]] && warn "There is another VMWare Horizon Client running with PID $VMWV_PID"
+
+vmware-view -s "${WIN_SL_SERVER_URL}" -u "${WIN_SL_USER}" -d "${WIN_SL_DOMAIN}" -p "${WIN_SL_PASSWD}" -n "${WIN_SL_DESKTOP}" --protocol="PCOIP" --desktopSize="large" -q --save &>"${LOG_FILE}" &

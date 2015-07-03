@@ -10,22 +10,31 @@
 # Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/
 #=======================================================================================================
 
-export VPN_1_GATEWAY=<%= @vpn_1_gateway %>
-export VPN_1_USER=<%= @vpn_1_username %>
-export VPN_1_PASSWD=<%= @vpn_1_passwd %>
+export VPN_1_GATEWAY=<%= @vpn_ff_gateway %>
+export VPN_1_USER=<%= @vpn_ff_username %>
+export VPN_1_PASSWD=<%= @vpn_ff_passwd %>
 
-export VPN_2_GATEWAY=<%= @vpn_2_gateway %>
-export VPN_2_USER=<%= @vpn_2_username %>
-export VPN_2_PASSWD=<%= @vpn_2_passwd %>
+export VPN_2_GATEWAY=<%= @vpn_sl_gateway %>
+export VPN_2_USER=<%= @vpn_sl_username %>
+export VPN_2_PASSWD=<%= @vpn_sl_passwd %>
 
-export WIN_USER=<%= @win_username %>
-export WIN_PASSWD=<%= @win_passwd %>
-export WIN_DOMAIN=<%= @win_domain %>
-export WIN_SERVER_URL=<%= @win_server_url %>
-export WIN_DESKTOP=<%= @win_desktop %>
+export WIN_FF_USER=<%= @win_ff_username %>
+export WIN_FF_PASSWD=<%= @win_ff_passwd %>
+export WIN_FF_DOMAIN=<%= @win_ff_domain %>
+export WIN_FF_SERVER_URL=<%= @win_ff_server_url %>
+export WIN_FF_DESKTOP=<%= @win_ff_desktop %>
+
+export WIN_SL_USER=<%= @win_sl_username %>
+export WIN_SL_PASSWD=<%= @win_sl_passwd %>
+export WIN_SL_DOMAIN=<%= @win_sl_domain %>
+export WIN_SL_SERVER_URL=<%= @win_sl_server_url %>
+export WIN_SL_DESKTOP=<%= @win_sl_desktop %>
 
 export UNIX_USER=<%= @unix_username %>
 export UNIX_FF_DOMAIN=<%= @unix_ff_domainname %>
 export UNIX_SL_DOMAIN=<%= @unix_sl_domainname %>
+export UNIX_FF_DEFAULT_SERVER=<%= @unix_ff_default_server %>
+export UNIX_SL_DEFAULT_SERVER=<%= @unix_sl_default_server %>
 
 export PUPPET_FF=<%= @puppet_ff_hostname %>.${UNIX_FF_DOMAIN}
+export PUPPET_SL=<%= @puppet_sl_hostname %>.${UNIX_SL_DOMAIN}

@@ -1,23 +1,37 @@
 class office (
   $username                   = $users::username,
-  $vmware_horizon_client_url  = $office::vmware_horizon_client_url,
-  $sl_vpn_url                 = $office::sl_vpn_url,
-  $vpn_config_content         = $office::vpn_config,
-  $vpn_1_gateway              = $office::vpn_1_gateway,
-  $vpn_1_username             = $office::vpn_1_username,
-  $vpn_1_passwd               = $office::vpn_1_passwd,
-  $vpn_2_gateway              = $office::vpn_2_gateway,
-  $vpn_2_username             = $office::vpn_2_username,
-  $vpn_2_passwd               = $office::vpn_2_passwd,
-  $win_username               = $office::win_username,
-  $win_passwd                 = $office::win_passwd,
-  $win_domain                 = $office::win_domain,
-  $win_server_url             = $office::win_server_url,
-  $win_desktop                = $office::win_desktop,
-  $unix_username              = $office::unix_username,
-  $unix_ff_domainname         = $office::unix_ff_domainname,
-  $unix_sl_domainname         = $office::unix_sl_domainname,
-  $puppet_ff_hostname         = $office::puppet_ff_hostname
+  $vmware_horizon_client_url,
+  $sl_vpn_url,
+
+  $vpn_ff_config,
+  $vpn_ff_gateway,
+  $vpn_ff_username,
+  $vpn_ff_passwd,
+
+  $vpn_sl_gateway,
+  $vpn_sl_username,
+  $vpn_sl_passwd,
+
+  $win_ff_username,
+  $win_ff_passwd,
+  $win_ff_domain,
+  $win_ff_server_url,
+  $win_ff_desktop,
+
+  $win_sl_username,
+  $win_sl_passwd,
+  $win_sl_domain,
+  $win_sl_server_url,
+  $win_sl_desktop,
+
+  $unix_username,
+  $unix_ff_domainname,
+  $unix_sl_domainname,
+  $unix_ff_default_server,
+  $unix_sl_default_server,
+  
+  $puppet_ff_hostname,
+  $puppet_sl_hostname
 ) {
 
   # Install VMWare Horizon Client Requirements
@@ -70,6 +84,25 @@ class office (
     logoutput => on_failure,
   }
 
+  file { "/home/${username}/.vmware":
+    ensure    => "directory",
+    mode      => 0700,
+    owner     => $username,
+    group     => $username,
+  }
+  file { "/home/${username}/.vmware/view-preferences":
+    ensure    => "file",
+    mode      => 0664,
+    owner     => $username,
+    group     => $username,
+    require   => File["/home/${username}/.vmware"],
+  }
+  exec { "VMware-Horizon-Client sslVerificationMode":
+    command   => "echo 'view.sslVerificationMode = \"3\"' >> /home/${username}/.vmware/view-preferences",
+    unless    => "grep -q 'view.sslVerificationMode = \"3\"' /home/${username}/.vmware/view-preferences",
+    require   => File["/home/${username}/.vmware/view-preferences"],
+  }
+
   # The install will continue in the setup.sh script because it's done with a GUI
 
   # Install SoftLayer VPN. Source: http://archive.thoughtsoncloud.com/2014/08/ibm-softlayer-vpn-solution-linux-command-line-interface-clients/
@@ -94,52 +127,60 @@ class office (
     logoutput => on_failure,
   }
 
-  file { "/home/${username}/bin/vpn_1.sh":
+  file { "/home/${username}/bin/vpnff":
     ensure    => "file",
     mode		  => 0750,
     owner     => $username,
     group	    => $username,
-    source    => "puppet:///modules/office/vpn_1.sh",
+    source    => "puppet:///modules/office/vpnff",
     require   => File["/home/${username}/bin"],
   }
-  file { "/home/${username}/bin/vpn_2.sh":
+  file { "/home/${username}/bin/vpnsl":
     ensure    => "file",
     mode      => 0750,
     owner     => $username,
     group     => $username,
-    source    => "puppet:///modules/office/vpn_2.sh",
+    source    => "puppet:///modules/office/vpnsl",
     require   => File["/home/${username}/bin"],
   }
-  file { "/home/${username}/bin/qmsgr.sh":
+  file { "/home/${username}/bin/Qmsgr":
     ensure	=> "file",
     mode		=> 0750,
     owner		=> $username,
     group		=> $username,
-    source	=> "puppet:///modules/office/qmsgr.sh",
+    source	=> "puppet:///modules/office/Qmsgr",
     require => File["/home/${username}/bin"],
   }
-  file { "/home/${username}/bin/desktop.sh":
+  file { "/home/${username}/bin/vmff":
     ensure	=> "file",
     mode		=> 0750,
     owner		=> $username,
     group		=> $username,
-    source	=> "puppet:///modules/office/desktop.sh",
+    source	=> "puppet:///modules/office/vmff",
     require => File["/home/${username}/bin"],
   }
-  file { "/home/${username}/bin/connect2office.sh":
+  file { "/home/${username}/bin/vmsl":
+    ensure  => "file",
+    mode    => 0750,
+    owner   => $username,
+    group   => $username,
+    source  => "puppet:///modules/office/vmsl",
+    require => File["/home/${username}/bin"],
+  }
+  file { "/home/${username}/bin/c2office":
     ensure	=> "file",
     mode		=> 0750,
     owner		=> $username,
     group		=> $username,
-    source	=> "puppet:///modules/office/connect2office.sh",
+    source	=> "puppet:///modules/office/c2office",
     require => File["/home/${username}/bin"],
   }
-  file { "/etc/NetworkManager/system-connections/VPN_FF":
+  file { "/etc/NetworkManager/system-connections/FF":
     ensure	=> "file",
     mode		=> 0640,
     owner		=> root,
     group		=> root,
-    content => $vpn_config_content,
+    content => $vpn_ff_config,
   }
   file { "/etc/profile.d/office-settings.sh":
     ensure  => "file",

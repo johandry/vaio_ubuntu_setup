@@ -20,16 +20,14 @@ source "/home/${USER}/bin/common.sh"
 
 echo "${SKYPE_USER}" "${SKYPE_PASSWD}" | /usr/bin/skype --pipelogin &>"${LOG_FILE}" &
 
-/home/${USER}/bin/vpn_1.sh --status
-VPN_1_Connected=$?
-[[ ${VPN_1_Connected} -eq 1 ]] && /home/${USER}/bin/vpn_1.sh --connect 
+# Connect to FF VPN. If you are already connected it will not do it again
+/home/${USER}/bin/vpnff --connect 
 
-# /home/${USER}/bin/vpn_2.sh --status
-# VPN_2_Connected=$?
-# [[ ${VPN_2_Connected} -eq 1 ]] && /home/${USER}/bin/vpn_2.sh --connect 
+# /home/${USER}/bin/vpnsl --connect 
 
 # If Q Messenger is running, will not run again
-/home/${USER}/bin/qmsgr.sh
+/home/${USER}/bin/Qmsgr
 
 # If VMWare Horizon is running, will not run again
-/home/${USER}/bin/desktop.sh
+/home/${USER}/bin/vmff
+/home/${USER}/bin/vmsl

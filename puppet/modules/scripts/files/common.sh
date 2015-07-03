@@ -12,9 +12,9 @@
 # Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/
 #=======================================================================================================
 
-declare -r SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
-declare -r SCRIPT_NAME="$( basename "$0" )"
-declare -r LOG_FILE=/tmp/${SCRIPT_NAME%.*}.log
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+SCRIPT_NAME="$( basename "$0" )"
+LOG_FILE=/tmp/${SCRIPT_NAME%.*}.log
 
 log () {
   msg="\e[${3};1m[${1}]\e[0m\t${2}\n"

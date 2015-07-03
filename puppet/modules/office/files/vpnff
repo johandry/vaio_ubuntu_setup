@@ -1,0 +1,84 @@
+#/bin/env bash
+
+#=======================================================================================================
+# Author: Johandry Amador <johandry@gmail.com>
+# Title:  Connect to VPN
+# Usage: ${script_name} [--connect | --disconnect | --status | --help]
+#
+# Options:
+#     -h, --help    Display this help message.
+#     --connect: Connect to the VPN
+#     --disconnect: Disconnect from the VPN
+#     --status: Display if the conputer is or not connected to the VPN
+#
+# Description: 
+#
+# Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/ 
+#=======================================================================================================
+
+source "/home/${USER}/bin/common.sh"
+
+get_pid () {
+  VPN_PID=$( ps -fea | grep 'openconnect' | grep -v grep | head -1 | awk '{print $2}' )
+  echo "${VPN_PID}"
+}
+
+# Functions using OpenConnect command. Keep it here just in case nm-cli fail
+#
+# [[ -z "$VPN_FF_GATEWAY" ]] && error "VPN_FF_GATEWAY variable is not defined" && exit 1 
+# [[ -z "$VPN_FF_USER" ]]    && error "VPN_FF_USER variable is not defined"    && exit 1
+# [[ -z "$VPN_FF_PASSWD" ]]  && error "VPN_FF_PASSWD variable is not defined"  && exit 1
+#
+# connect () {
+#   VPN_PID=$( get_pid )
+#   [[ -n "${VPN_PID}" ]] && warn "VPN FF is already connected (${VPN_PID})" && return 1
+
+#   sudo su -c "echo -ne '${VPN_FF_PASSWD}\npush' | openconnect -u ${VPN_FF_USER} ${VPN_FF_GATEWAY} &"
+
+#   VPN_PID=$( get_pid )
+#   [[ -z "${VPN_PID}" ]] && error "VPN SL fail to connect" && return 1
+
+#   ok "VPN FF is connected (${VPN_PID})" && return 0
+# }
+# disconnect () {
+#   VPN_PID=$( get_pid )
+#   [[ -z "${VPN_PID}" ]] && error "VPN FF is not running" && return 1
+
+#   sudo kill -9 ${VPN_PID} && ok "VPN FF disconnected"
+
+#   VPN_PID=$( get_pid )
+#   [[ -n "${VPN_PID}" ]] && error "VPN FF could not be disconnected (${VPN_PID})" && return 1
+#   return 0
+# }
+# status () {
+#   VPN_PID=$( get_pid )
+#   [[ -n "${VPN_PID}" ]] && msg="VPN FF is connected (${VPN_PID})"  && exit_code=0
+#   [[ -z "${VPN_PID}" ]] && msg="VPN FF is not connected"           && exit_code=1
+
+#   info "${msg}"
+#   exit ${exit_code}
+# }
+
+connect () {
+  nmcli connection up FF
+  [[ $? -ne 0 ]] && error "VPN FF fail to connect" && return 1
+  ok "VPN FF connected" && return 0
+}
+
+disconnect () {
+  nmcli connection down FF
+  [[ $? -ne 0 ]] && error "VPN FF fail to disconnect or is not connected" && return 1
+  ok "VPN FF disconnected" && return 0
+}
+
+status () {
+  nmcli connection show --active FF | grep VPN.VPN-STATE | grep -q 'VPN connected'
+
+  [[ $? -eq 0 ]] && info "VPN FF is connected ($( get_pid ))" && return 0
+  info "VPN FF is not connected" && return 1
+}
+
+[[ -z "${1}" ]]                 && status
+[[ "${1}" == "--connect" ]]     && connect
+[[ "${1}" == "--disconnect" ]]  && disconnect
+[[ "${1}" == "--status" ]]      && status

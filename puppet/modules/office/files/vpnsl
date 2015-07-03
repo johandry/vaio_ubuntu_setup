@@ -1,0 +1,48 @@
+#/bin/env bash
+
+#=======================================================================================================
+# Author: Johandry Amador <johandry@gmail.com>
+# Title:  Connect to VPN
+# Usage: ${script_name} [--connect | --disconnect | --status | --help]
+#
+# Options:
+#     -h, --help    Display this help message.
+#     --connect: Connect to the VPN
+#     --disconnect: Disconnect from the VPN
+#     --status: Display if the conputer is or not connected to the VPN
+#
+# Description: 
+#
+# Report Issues or create Pull Requests in http://github.com/johandry/vaio_ubuntu_setup/ 
+#=======================================================================================================
+
+source "/home/${USER}/bin/common.sh"
+
+# [[ -z "$VPN_SL_GATEWAY" ]] && error "VPN_SL_GATEWAY variable is not defined" && exit 1 
+# [[ -z "$VPN_SL_USER" ]]    && error "VPN_SL_USER variable is not defined"    && exit 1
+# [[ -z "$VPN_SL_PASSWD" ]]  && error "VPN_SL_PASSWD variable is not defined"  && exit 1
+
+
+get_pid () {
+
+}
+
+VPN_PID=$( get_pid )
+
+connect () {
+
+}
+
+disconnect () {
+
+}
+
+status () {
+
+}
+
+[[ -z "${1}" ]]                 && status
+[[ "${1}" == "--help" ]]        && usage
+[[ "${1}" == "--connect" ]]     && connect
+[[ "${1}" == "--disconnect" ]]  && disconnect
+[[ "${1}" == "--status" ]]      && status
