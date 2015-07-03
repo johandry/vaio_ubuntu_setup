@@ -27,6 +27,48 @@ init () {
   START_T=$(date +%s)
 }
 
+decrypt_keys () {
+
+  info "Decrypting file with Hiera-eyaml keys"
+
+  if [[ -z "${GPG_PASSWD}" ]]
+    then
+    info "Enter GPG password to encrypt/decrypt files"
+    read -p "GPG Password: " -r -s GPG_PASSWD
+    echo
+  fi
+
+  TMP_KEYS="/tmp/keys"
+  file="config.tar.gz"
+  source_dir="${SCRIPT_DIR}/puppet/modules/puppet/files"
+  target_dir="/etc/puppet/secure/keys"
+
+  # Decrypt the file from the project in GitHub
+  if [[ -n "${GPG_PASSWD}" ]]
+    then
+    info "Decrypting ${file##*/}"
+    echo "${GPG_PASSWD}" | gpg --no-tty -q --passphrase-fd 0 --yes "${source_dir}/${file}.gpg" &>>"${LOG_FILE}"
+    [[ $? -ne 0 ]] && error "Decrypting ${file}"
+  else
+    info "Enter password to decrypt the file ${file}.gpg"
+    gpg "${source_dir}/${file}.gpg"
+  fi
+
+  # Move the decrypted file to a temporal directory
+  mkdir -p ${TMP_KEYS}
+  mv -f "${source_dir}/${file}" ${TMP_KEYS}
+  cd ${TMP_KEYS}
+
+  # Uncompress the file and move it to the puppet directory
+  tar xzf ${file}
+  sudo mkdir -p "${target_dir}" && sudo chmod -R 0775 "${target_dir%/*}"
+  sudo mv ${TMP_KEYS}/*.pem "${target_dir}"
+  
+  ok "Hiera-eyaml keys ready for puppet"
+
+  rm -rf ${TMP_KEYS}
+}
+
 install_Puppet () {
   [[ "$(/usr/bin/puppet --version)" == "${PUPPET_VERSION}" ]] && info "Puppet ${PUPPET_VERSION} is installed" && return 1
   info "Installing puppet"
@@ -60,6 +102,8 @@ setup () {
   init 
 
   install_Puppet
+
+  decrypt_keys
 
   ${SCRIPT_DIR}/update.sh
 
