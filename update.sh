@@ -41,7 +41,7 @@ update_puppet () {
   info "Installing latest puppet rules"
 
   cd "${SCRIPT_DIR}/puppet"
-  git remote -v | grep -q /var/git/puppet || git remote add origin /var/git/puppet
+  git remote -v | grep -q /var/git/puppet || git remote rm origin && git remote add origin /var/git/puppet
   git add .
   git commit -m "Update"
   sudo git push origin master
