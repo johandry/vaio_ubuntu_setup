@@ -27,10 +27,6 @@ init () {
   START_T=$(date +%s)
 }
 
-setup_puppet_first_time () {
-  sudo cp -a ${SCRIPT_DIR}/puppet/* /etc/puppet
-}
-
 decrypt_keys () {
 
   info "Decrypting file with Hiera-eyaml keys"
@@ -107,11 +103,13 @@ setup () {
 
   install_Puppet
 
-  setup_puppet_first_time
+  info "Setting puppet modules for the first time"
+  sudo cp -a ${SCRIPT_DIR}/puppet/* /etc/puppet
 
   decrypt_keys
 
-  ${SCRIPT_DIR}/update.sh
+  info "Applying puppet rules"
+  sudo puppet  apply ${DEBUG} ${VERBOSE} /etc/puppet/manifests/site.pp
 
   install_VMWare_Horizon_Client
 
