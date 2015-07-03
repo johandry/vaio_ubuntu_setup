@@ -63,6 +63,7 @@ decrypt_keys () {
   tar xzf ${file}
   sudo mkdir -p "${target_dir}" && sudo chmod -R 0775 "${target_dir%/*}"
   sudo mv ${TMP_KEYS}/*.pem "${target_dir}"
+  sudo chown -R root.root "${target_dir}"
 
   ok "Hiera-eyaml keys ready for puppet"
 
@@ -120,7 +121,7 @@ finish () {
   END_T=$(date +%s)
   info "Setup completed in $(($END_T - $START_T)) seconds"
 
-  rm -rf ${HOME}/Setup
+  # rm -rf ${HOME}/Setup
 }
 
 deploy () {
