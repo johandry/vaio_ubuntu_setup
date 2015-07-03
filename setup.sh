@@ -27,6 +27,10 @@ init () {
   START_T=$(date +%s)
 }
 
+setup_puppet_first_time () {
+  sudo cp -a ${SCRIPT_DIR}/puppet/* /etc/puppet
+}
+
 decrypt_keys () {
 
   info "Decrypting file with Hiera-eyaml keys"
@@ -63,7 +67,7 @@ decrypt_keys () {
   tar xzf ${file}
   sudo mkdir -p "${target_dir}" && sudo chmod -R 0775 "${target_dir%/*}"
   sudo mv ${TMP_KEYS}/*.pem "${target_dir}"
-  
+
   ok "Hiera-eyaml keys ready for puppet"
 
   rm -rf ${TMP_KEYS}
@@ -102,6 +106,8 @@ setup () {
   init 
 
   install_Puppet
+
+  setup_puppet_first_time
 
   decrypt_keys
 
